@@ -18,7 +18,6 @@
       apt:
         update_cache: yes
   
-  #Install and Config Elasticsearch
     - name: Установка Elasticsearch
       package:
         name: elasticsearch
