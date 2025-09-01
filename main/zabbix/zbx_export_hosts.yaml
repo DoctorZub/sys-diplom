@@ -1,0 +1,30 @@
+zabbix_export:
+  version: '7.0'
+  host_groups:
+    - uuid: c04df097ccfa4efb83f7a4959961a02d
+      name: Webs
+  hosts:
+    - host: web-a
+      name: web-a
+      templates:
+        - name: 'Linux by Zabbix agent'
+      groups:
+        - name: Webs
+      interfaces:
+        - useip: 'NO'
+          ip: ''
+          dns: web-a.ru-central1.internal
+          interface_ref: if1
+      inventory_mode: DISABLED
+    - host: web-b
+      name: web-b
+      templates:
+        - name: 'Linux by Zabbix agent'
+      groups:
+        - name: Webs
+      interfaces:
+        - useip: 'NO'
+          ip: ''
+          dns: web-b.ru-central1.internal
+          interface_ref: if1
+      inventory_mode: DISABLED

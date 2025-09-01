@@ -1,0 +1,18 @@
+filebeat.inputs:
+  - type: filestream
+    id: access
+    enabled: true
+    paths:
+      - /var/log/nginx/access.log
+    tags: ["nginx", "access"]
+  - type: filestream
+    id: error
+    enabled: true
+    paths:
+      - /var/log/nginx/error.log
+    tags: ["nginx", "error"]
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash.ru-central1.internal:5044"]
+

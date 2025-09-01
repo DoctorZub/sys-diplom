@@ -1,0 +1,34 @@
+---
+- name: Install elasticsearch
+  hosts: elasticsearch
+  become: yes
+
+  tasks:
+    - name: Импорт ключа репозитория ELK
+      apt_key:
+        url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        state: present
+    - name: Добавление репозитория ELK
+      apt_repository:
+        repo:
+          "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main"
+        state: present
+        filename: elk
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+  
+  #Install and Config Elasticsearch
+    - name: install elasticsearch
+      package:
+        name: elasticsearch
+        state: present
+    - name: Config Elasticsearch
+      copy:
+        src: ./configs/elasticsearch/elasticsearch.yml
+        dest: /etc/elasticsearch/elasticsearch.yml
+    
+    - name: запуск Elasticsearch
+      service:
+        name: elasticsearch
+        state: restarted

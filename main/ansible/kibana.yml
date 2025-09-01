@@ -1,0 +1,31 @@
+---
+- name: Install elastic and logstash
+  hosts: kibana
+  become: yes
+
+  tasks:
+    - name: Импорт ключа репозитория ELK
+      apt_key:
+        url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        state: present
+    - name: Добавление репозитория ELK
+      apt_repository:
+        repo:
+          "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main"
+        state: present
+        filename: elk
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+    - name: install kibana
+      package:
+        name: kibana
+        state: present
+    - name: Config kibana
+      copy:
+        src: ./configs/kibana/kibana.yml
+        dest: /etc/kibana/kibana.yml
+    - name: запуск kibana
+      service:
+        name: kibana
+        state: restarted

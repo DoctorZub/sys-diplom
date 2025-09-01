@@ -1,0 +1,77 @@
+---
+- name: Install nginx and zabbix agent
+  hosts: webservers
+  become: yes
+
+  tasks:
+  # Installing Nginx
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+    - name: installing Nginx
+      package:
+        name: nginx
+        state: present
+    - name: Start nginx.service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  # Installing Zabbix Agent
+    - name: Импорт ключа репозитория Zabbix
+      apt_key:
+        url: "https://repo.zabbix.com/zabbix-official-repo.key"
+        state: present
+    - name: Добавление репозитория Zabbix
+      apt_repository:
+        repo:
+          "deb http://repo.zabbix.com/zabbix/7.0/ubuntu jammy main"
+        state: present
+        filename: zabbix
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+
+    - name: install zabbix agent2
+      package:
+        name: zabbix-agent2
+        state: present
+
+    - name: Настройка конфигурации Zabbix Agent
+      lineinfile:
+        path: /etc/zabbix/zabbix_agentd.conf
+        regexp: '^Server='
+        line: 'Server=zabbix.ru-central1.internal'
+
+    - name: Перезапуск сервисов
+      service:
+        name: zabbix-agent
+        state: restarted
+
+  # Install Filebeat
+    - name: Импорт ключа репозитория ELK
+      apt_key:
+        url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        state: present
+    - name: Добавление репозитория ELK
+      apt_repository:
+        repo:
+          "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main"
+        state: present
+        filename: elk
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+    - name: install filebeat
+      package:
+        name: filebeat
+        state: present
+    - name: Config Filebeat
+      copy:
+        src: ./configs/filebeat/filebeat.yml
+        dest: /etc/filebeat/filebeat.yml
+    - name: запуск Filebeat
+      service:
+        name: filebeat
+        state: restarted
