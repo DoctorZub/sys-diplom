@@ -1,5 +1,5 @@
 ---
-- name: Install elastic and logstash
+- name: Установка и настройка Kibana
   hosts: kibana
   become: yes
 
@@ -17,15 +17,15 @@
     - name: Обновление списка пакетов
       apt:
         update_cache: yes
-    - name: install kibana
+    - name: Установка Kibana
       package:
         name: kibana
         state: present
-    - name: Config kibana
+    - name: Настройка Kibana
       copy:
         src: ./configs/kibana/kibana.yml
         dest: /etc/kibana/kibana.yml
-    - name: запуск kibana
+    - name: Запуск Kibana
       service:
         name: kibana
         state: restarted
