@@ -6,10 +6,10 @@ data "yandex_compute_image" "ubuntu_2204_lts" {
 
 /// Bastion
 resource "yandex_compute_instance" "bastion" {
-  name        = "bastion" #Имя ВМ в облачной консоли
-  hostname    = "bastion" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "bastion" 
+  hostname    = "bastion"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
   resources {
     cores         = 2
@@ -45,10 +45,10 @@ resource "yandex_compute_instance" "bastion" {
 
 /// Web-A
 resource "yandex_compute_instance" "web_a" {
-  name        = "web-a" #Имя ВМ в облачной консоли
-  hostname    = "web-a" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "web-a"
+  hostname    = "web-a"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
 
   resources {
@@ -79,16 +79,16 @@ resource "yandex_compute_instance" "web_a" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
     nat                = false
-    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.webs.id]
   }
 }
 
 /// Web-B
 resource "yandex_compute_instance" "web_b" {
-  name        = "web-b" #Имя ВМ в облачной консоли
-  hostname    = "web-b" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "web-b"
+  hostname    = "web-b"
   platform_id = "standard-v3"
-  zone        = "ru-central1-b" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-b"
 
   resources {
     cores         = 2
@@ -118,17 +118,17 @@ resource "yandex_compute_instance" "web_b" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_b.id
     nat                = false
-    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.webs.id]
 
   }
 }
 
 /// Zabbix_server
 resource "yandex_compute_instance" "zabbix" {
-  name        = "zabbix" #Имя ВМ в облачной консоли
-  hostname    = "zabbix" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "zabbix"
+  hostname    = "zabbix"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
   resources {
     cores         = 2
@@ -158,7 +158,7 @@ resource "yandex_compute_instance" "zabbix" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a_pub.id
     nat                = true
-    /// security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.zabbix-server.id]
 
   }
 }
@@ -166,10 +166,10 @@ resource "yandex_compute_instance" "zabbix" {
 
 /// Elasticsearch
 resource "yandex_compute_instance" "elastic" {
-  name        = "elastic" #Имя ВМ в облачной консоли
-  hostname    = "elastic" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "elastic"
+  hostname    = "elastic"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
   resources {
     cores         = 4
@@ -199,7 +199,7 @@ resource "yandex_compute_instance" "elastic" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
     nat                = false
-    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.elastic.id]
 
   }
 }
@@ -207,10 +207,10 @@ resource "yandex_compute_instance" "elastic" {
 
 /// Logstash
 resource "yandex_compute_instance" "logstash" {
-  name        = "logstash" #Имя ВМ в облачной консоли
-  hostname    = "logstash" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "logstash"
+  hostname    = "logstash"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
   resources {
     cores         = 4
@@ -240,7 +240,7 @@ resource "yandex_compute_instance" "logstash" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
     nat                = false
-    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id]
 
   }
 }
@@ -248,10 +248,10 @@ resource "yandex_compute_instance" "logstash" {
 
 /// Kibana
 resource "yandex_compute_instance" "kibana" {
-  name        = "kibana" #Имя ВМ в облачной консоли
-  hostname    = "kibana" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  name        = "kibana"
+  hostname    = "kibana"
   platform_id = "standard-v3"
-  zone        = "ru-central1-a" #зона ВМ должна совпадать с зоной subnet!!!
+  zone        = "ru-central1-a"
 
   resources {
     cores         = 2
@@ -281,7 +281,7 @@ resource "yandex_compute_instance" "kibana" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a_pub.id
     nat                = true
-    /// security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.web_sg.id]
+    security_group_ids = [yandex_vpc_security_group.kibana.id]
 
   }
 }
