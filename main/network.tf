@@ -74,7 +74,7 @@ resource "yandex_vpc_security_group" "LAN" {
   name       = "LAN-"
   network_id = yandex_vpc_network.develop.id
   ingress {
-    description    = "Allow 10.0.0.0/8"
+    description    = "Allow 10.0.0.0/16"
     protocol       = "ANY"
     v4_cidr_blocks = ["10.0.0.0/16"]
     from_port      = 0
