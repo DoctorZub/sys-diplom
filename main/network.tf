@@ -33,26 +33,26 @@ resource "yandex_vpc_subnet" "develop_a_pub" {
 
 
 #создаем NAT для выхода в интернет
-resource "yandex_vpc_gateway" "nat_gateway" {
-  name = "fops-gateway"
+resource "yandex_vpc_gateway" "gateway_1" {
+  name = "gateway_1"
   shared_egress_gateway {}
 }
 
 #создаем сетевой маршрут для выхода в интернет через NAT
 resource "yandex_vpc_route_table" "rt" {
-  name       = "fops-route-table"
+  name       = "gateway-table"
   network_id = yandex_vpc_network.develop.id
 
   static_route {
     destination_prefix = "0.0.0.0/0"
-    gateway_id         = yandex_vpc_gateway.nat_gateway.id
+    gateway_id         = yandex_vpc_gateway.gateway_1.id
   }
 }
 
 #создаем группы безопасности(firewall)
 
 resource "yandex_vpc_security_group" "bastion" {
-  name       = "bastion-sg"
+  name       = "bastion"
   network_id = yandex_vpc_network.develop.id
   ingress {
     description    = "Allow 0.0.0.0/0"
@@ -67,17 +67,16 @@ resource "yandex_vpc_security_group" "bastion" {
     from_port      = 0
     to_port        = 65535
   }
-
 }
 
 
 resource "yandex_vpc_security_group" "LAN" {
-  name       = "LAN-sg"
+  name       = "LAN-"
   network_id = yandex_vpc_network.develop.id
   ingress {
     description    = "Allow 10.0.0.0/8"
     protocol       = "ANY"
-    v4_cidr_blocks = ["10.0.0.0/8"]
+    v4_cidr_blocks = ["10.0.0.0/16"]
     from_port      = 0
     to_port        = 65535
   }
@@ -88,7 +87,6 @@ resource "yandex_vpc_security_group" "LAN" {
     from_port      = 0
     to_port        = 65535
   }
-
 }
 
 resource "yandex_vpc_security_group" "web_sg" {
