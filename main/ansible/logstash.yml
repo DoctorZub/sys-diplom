@@ -17,8 +17,7 @@
     - name: Обновление списка пакетов
       apt:
         update_cache: yes
-  
-   #  Install and Config Logstash
+        
     - name: Установка Logstash
       package:
         name: logstash
