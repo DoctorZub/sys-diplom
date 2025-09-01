@@ -1,5 +1,5 @@
 ---
-- name: Install elasticsearch
+- name: Установка и настройка Elasticsearch
   hosts: elasticsearch
   become: yes
 
@@ -19,16 +19,16 @@
         update_cache: yes
   
   #Install and Config Elasticsearch
-    - name: install elasticsearch
+    - name: Установка Elasticsearch
       package:
         name: elasticsearch
         state: present
-    - name: Config Elasticsearch
+    - name: Настройка Elasticsearch
       copy:
         src: ./configs/elasticsearch/elasticsearch.yml
         dest: /etc/elasticsearch/elasticsearch.yml
     
-    - name: запуск Elasticsearch
+    - name: Запуск Elasticsearch
       service:
         name: elasticsearch
         state: restarted
