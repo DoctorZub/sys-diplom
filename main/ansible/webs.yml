@@ -1,24 +1,23 @@
 ---
-- name: Install nginx and zabbix agent
+- name: Установка и настройка Nginx, Zabbix Agent2, Filebeat на веб-сервера
   hosts: webservers
   become: yes
 
   tasks:
-  # Installing Nginx
     - name: Обновление списка пакетов
       apt:
         update_cache: yes
-    - name: installing Nginx
+    - name: Установка Nginx
       package:
         name: nginx
         state: present
-    - name: Start nginx.service
+    - name: Запуск Nginx
       service:
         name: nginx
         state: started
         enabled: yes
 
-  # Installing Zabbix Agent
+
     - name: Импорт ключа репозитория Zabbix
       apt_key:
         url: "https://repo.zabbix.com/zabbix-official-repo.key"
@@ -33,23 +32,23 @@
       apt:
         update_cache: yes
 
-    - name: install zabbix agent2
+    - name: Установка Zabbix Agent2
       package:
         name: zabbix-agent2
         state: present
 
-    - name: Настройка конфигурации Zabbix Agent
+    - name: Настройка конфигурации Zabbix Agent2
       lineinfile:
         path: /etc/zabbix/zabbix_agentd.conf
         regexp: '^Server='
         line: 'Server=zabbix.ru-central1.internal'
 
-    - name: Перезапуск сервисов
+    - name: Перезапуск Zabbix Agent2
       service:
-        name: zabbix-agent
+        name: zabbix-agent2
         state: restarted
 
-  # Install Filebeat
+
     - name: Импорт ключа репозитория ELK
       apt_key:
         url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
@@ -63,11 +62,11 @@
     - name: Обновление списка пакетов
       apt:
         update_cache: yes
-    - name: install filebeat
+    - name: Установка Filebeat
       package:
         name: filebeat
         state: present
-    - name: Config Filebeat
+    - name: Настройка Filebeat
       copy:
         src: ./configs/filebeat/filebeat.yml
         dest: /etc/filebeat/filebeat.yml
