@@ -281,7 +281,7 @@ resource "yandex_compute_instance" "kibana" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a_pub.id
     nat                = true
-    security_group_ids = [yandex_vpc_security_group.kibana.id]
+    security_group_ids = [yandex_vpc_security_group.LAN.id, yandex_vpc_security_group.kibana.id]
 
   }
 }

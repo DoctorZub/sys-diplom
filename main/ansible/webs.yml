@@ -39,8 +39,8 @@
 
     - name: Настройка конфигурации Zabbix Agent2
       lineinfile:
-        path: /etc/zabbix/zabbix_agentd.conf
-        regexp: '^Server='
+        path: /etc/zabbix/zabbix_agent2.conf
+        regexp: '^Server=127.0.0.1'
         line: 'Server=zabbix.ru-central1.internal'
 
     - name: Перезапуск Zabbix Agent2

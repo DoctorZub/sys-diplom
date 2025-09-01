@@ -33,8 +33,8 @@ resource "yandex_vpc_subnet" "develop_a_pub" {
 
 
 #создаем NAT для выхода в интернет
-resource "yandex_vpc_gateway" "gateway_1" {
-  name = "gateway_1"
+resource "yandex_vpc_gateway" "gateway-1" {
+  name = "gateway-1"
   shared_egress_gateway {}
 }
 
@@ -45,7 +45,7 @@ resource "yandex_vpc_route_table" "rt" {
 
   static_route {
     destination_prefix = "0.0.0.0/0"
-    gateway_id         = yandex_vpc_gateway.gateway_1.id
+    gateway_id         = yandex_vpc_gateway.gateway-1.id
   }
 }
 
@@ -71,7 +71,7 @@ resource "yandex_vpc_security_group" "bastion" {
 
 
 resource "yandex_vpc_security_group" "LAN" {
-  name       = "LAN-"
+  name       = "LAN"
   network_id = yandex_vpc_network.develop.id
   ingress {
     description    = "Allow 10.0.0.0/16"
