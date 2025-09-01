@@ -1,5 +1,5 @@
 ---
-- name: Install logstash
+- name: Установка и настройка Logstash
   hosts: logstash
   become: yes
 
@@ -19,19 +19,19 @@
         update_cache: yes
   
    #  Install and Config Logstash
-    - name: install logstash
+    - name: Установка Logstash
       package:
         name: logstash
         state: present
-    - name: Config logstash
+    - name: Настройка Logstash_1
       copy:
         src: ./configs/logstash/pipelines.yml
         dest: /etc/logstash/pipelines.yml
-    - name: Config logstash pipeline
+    - name: Настройка Logstash_2
       copy:
         src: ./configs/logstash/beat_nginx.conf
         dest: /etc/logstash/conf.d/beat_nginx.conf
-    - name: запуск EL
+    - name: Запуск Logstash
       service:
         name: logstash
         state: restarted
