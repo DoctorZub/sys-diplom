@@ -89,8 +89,8 @@ resource "yandex_vpc_security_group" "LAN" {
   }
 }
 
-resource "yandex_vpc_security_group" "web_sg" {
-  name       = "web-sg"
+resource "yandex_vpc_security_group" "webs" {
+  name       = "webs"
   network_id = yandex_vpc_network.develop.id
 
 
@@ -110,18 +110,45 @@ resource "yandex_vpc_security_group" "web_sg" {
     description    = "Allow Zabbix Connection"
     protocol       = "ANY"
     port           = 10050
+    v4_cidr_blocks = ["192.168.0.0/24"]
+  }
+}
+
+resource "yandex_vpc_security_group" "elastic" {
+  name       = "elastic"
+  network_id = yandex_vpc_network.develop.id
+
+
+  ingress {
+    description    = "Allow Kibana connection"
+    protocol       = "TCP"
+    port           = 5601
+    v4_cidr_blocks = ["192.168.0.0/24"]
+  }
+}
+
+resource "yandex_vpc_security_group" "zabbix-server" {
+  name       = "zabbix-server"
+  network_id = yandex_vpc_network.develop.id
+
+
+  ingress {
+    description    = "Allow HTTP"
+    protocol       = "TCP"
+    port           = 8080
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "yandex_vpc_security_group" "kibana" {
+  name       = "kibana"
+  network_id = yandex_vpc_network.develop.id
+
+
   ingress {
-    description    = "Allow Kibana connection to ELK"
-    protocol       = "ANY"
-    port           = 9200
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description    = "Allow logstash"
-    protocol       = "ANY"
-    port           = 5044
+    description    = "Allow HTTP"
+    protocol       = "TCP"
+    port           = 5601
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
