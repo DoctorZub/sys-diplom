@@ -122,7 +122,7 @@ resource "yandex_vpc_security_group" "elastic" {
   ingress {
     description    = "Allow Kibana connection"
     protocol       = "TCP"
-    port           = 5601
+    port           = 9200
     v4_cidr_blocks = ["192.168.0.0/24"]
   }
 }
