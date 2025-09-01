@@ -1,5 +1,5 @@
 ---
-- name: Установка Zabbix Server
+- name: Установка и настройка Zabbix Server
   hosts: zabbix
   become: yes
 
@@ -12,16 +12,13 @@
       apt_repository:
         repo:
           "deb http://repo.zabbix.com/zabbix/7.0/ubuntu jammy main"
-          #- "deb-src https://repo.zabbix.com/zabbix/7.0/ubuntu jammy main"
         state: present
         filename: zabbix
     - name: Обновление списка пакетов
       apt:
         update_cache: yes
 
-
-  # Установка Zabbix сервера, веб-интерфейса и агента
-    - name: install zabbix components
+    - name: Установка Zabbix сервера, веб-интерфейса и агента
       package:
         name:
           - zabbix-server-pgsql
@@ -31,27 +28,25 @@
           - zabbix-sql-scripts
           - zabbix-agent
         state: present
-  # Установка postgreSQL
     - name: Установка PostgreSQL
       apt:
         name:
           - postgresql
           - postgresql-contrib
         state: present
-  # Создание базы данных
-    - name: DB PostgreSQL
+
+    - name: Создание базы данных
       shell: |
         su - postgres -c 'psql --command "CREATE USER zabbix WITH PASSWORD '\'password\'';"' /
         su - postgres -c 'psql --command "CREATE DATABASE zabbix OWNER zabbix;"' /
         zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
 
-  # Настройка БД для Zabbix Server
     - name: Настройка конфигурации Zabbix Server
       lineinfile:
         path: /etc/zabbix/zabbix_server.conf
         regexp: '^DBPassword='
         line: 'DBPassword=password'
-  # Настройка Nginx for Zabbix Server
+
     - name: Настройка конфигурации Ngninx (listen)
       lineinfile:
         path: /etc/zabbix/nginx.conf
