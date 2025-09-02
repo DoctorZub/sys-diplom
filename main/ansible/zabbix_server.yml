@@ -44,7 +44,7 @@
     - name: Настройка конфигурации Zabbix Server
       lineinfile:
         path: /etc/zabbix/zabbix_server.conf
-        regexp: '^DBPassword='
+        regexp: '^# DBPassword='
         line: 'DBPassword=password'
 
     - name: Настройка конфигурации Ngninx (listen)
