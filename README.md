@@ -138,6 +138,8 @@ resource "local_file" "inventory" {
 - Установки сервера Nginx;
 - Добавление репозиториев Zabbix, установка и настройка Zabbix Agent2;
 - Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+![Ansible Webs_1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_1.png)
+![Ansible Webs_2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_2.png)
 
 ---
 ### Сеть
