@@ -1,5 +1,5 @@
 ---
-- name: Установка и настройка Nginx, Zabbix Agent2, Filebeat на веб-сервера
+- name: Установка и настройка Nginx, Zabbix Agent2, Filebeat на веб-серверы
   hosts: webservers
   become: yes
 
