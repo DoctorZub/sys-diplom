@@ -34,7 +34,7 @@ resource "yandex_compute_instance" "bastion" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+  # scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id #зона ВМ должна совпадать с зоной subnet!!!
@@ -74,7 +74,7 @@ resource "yandex_compute_instance" "web_a" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+  # scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
@@ -113,7 +113,7 @@ resource "yandex_compute_instance" "web_b" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+ # scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_b.id
@@ -153,7 +153,7 @@ resource "yandex_compute_instance" "zabbix" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+#  scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a_pub.id
@@ -194,7 +194,7 @@ resource "yandex_compute_instance" "elastic" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+ # scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
@@ -235,7 +235,7 @@ resource "yandex_compute_instance" "logstash" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+#  scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a.id
@@ -276,7 +276,7 @@ resource "yandex_compute_instance" "kibana" {
     serial-port-enable = 1
   }
 
-  scheduling_policy { preemptible = true }
+#  scheduling_policy { preemptible = true }
 
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop_a_pub.id
