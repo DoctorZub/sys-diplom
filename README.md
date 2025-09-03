@@ -134,12 +134,42 @@ resource "local_file" "inventory" {
 
 Было принято решение - использовать в данной работе отдельные ansible-playbooks для каждого сервера, что позволяет облегчить процесс тестирования при создании или изменении конфигурации отдельного сервиса.
 1. [Ansible-playbook для серверов *web-a и web-b*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/webs.yml)  
-С помощью него выполняется процесс:
-- Установки сервера Nginx;
+С помощью него выполняются процессы:
+- Установка сервера Nginx;
 - Добавление репозиториев Zabbix, установка и настройка Zabbix Agent2;
-- Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+- Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).  
 ![Ansible Webs_1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_1.png)
 ![Ansible Webs_2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_2.png)
+2. [Ansible-playbook для сервера *zabbix*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/zabbix_server.yml)  
+С помощью него выполняются процессы:
+- Добавление репозиториев Zabbix;
+- Установка  Zabbix-server, Zabbix-frontend, Nginx, PostgreSQL;
+- Настройка базы PostgreSQL, Nginx и Zabbix-server для совместной работы.  
+![Ansible Zabbix](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_zabbix.png)
+3. [Ansible-playbook для сервера *elastic*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/elastic.yml)
+С помощью него выполняются процессы:
+- Добавление репозиториев Elasticsearch;
+- Установка  Elasticsearch;
+- Настройка Elasticsearch с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+![Ansible Elastic](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_elastic.png)
+4. [Ansible-playbook для сервера *logstash*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/logstash.yml)
+С помощью него выполняются процессы:
+- Добавление репозиториев Elasticsearch;
+- Установка  Logstash;
+- Настройка Logstash с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+![Ansible Logstash](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_logstash.png)
+5. [Ansible-playbook для сервера *kibana*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/kibana.yml)
+С помощью него выполняются процессы:
+- Добавление репозиториев Elasticsearch;
+- Установка  Kibana;
+- Настройка Kibana с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+![Ansible Kibana](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_kibana.png)
+
+
+
+
+
+
 
 ---
 ### Сеть
