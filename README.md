@@ -137,42 +137,90 @@ resource "local_file" "inventory" {
 С помощью него выполняются процессы:
 - Установка сервера Nginx;
 - Добавление репозиториев Zabbix, установка и настройка Zabbix Agent2;
-- Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).  
+- Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+
 ![Ansible Webs_1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_1.png)
 ![Ansible Webs_2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_web_2.png)
 2. [Ansible-playbook для сервера *zabbix*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/zabbix_server.yml)  
 С помощью него выполняются процессы:
 - Добавление репозиториев Zabbix;
-- Установка  Zabbix-server, Zabbix-frontend, Nginx, PostgreSQL;
-- Настройка базы PostgreSQL, Nginx и Zabbix-server для совместной работы.  
+- Установка  Zabbix-Server, Zabbix-frontend, Nginx, PostgreSQL;
+- Настройка базы PostgreSQL, Nginx и Zabbix-Server для совместной работы.
+   
 ![Ansible Zabbix](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_zabbix.png)
-3. [Ansible-playbook для сервера *elastic*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/elastic.yml)
+3. [Ansible-playbook для сервера *elastic*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/elastic.yml)  
 С помощью него выполняются процессы:
 - Добавление репозиториев Elasticsearch;
 - Установка  Elasticsearch;
 - Настройка Elasticsearch с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+  
 ![Ansible Elastic](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_elastic.png)
-4. [Ansible-playbook для сервера *logstash*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/logstash.yml)
+4. [Ansible-playbook для сервера *logstash*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/logstash.yml)  
 С помощью него выполняются процессы:
 - Добавление репозиториев Elasticsearch;
 - Установка  Logstash;
 - Настройка Logstash с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+  
 ![Ansible Logstash](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_logstash.png)
-5. [Ansible-playbook для сервера *kibana*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/kibana.yml)
+5. [Ansible-playbook для сервера *kibana*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/kibana.yml)  
 С помощью него выполняются процессы:
 - Добавление репозиториев Elasticsearch;
 - Установка  Kibana;
 - Настройка Kibana с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
+  
 ![Ansible Kibana](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ans_kibana.png)
-
-
-
-
-
-
 
 ---
 ### Сеть
+Terraform код, описывающий создание сети и правил сетевого взаимодействия для данной работы, представлен в файле [network.tf](https://github.com/DoctorZub/sys-diplom/blob/main/main/network.tf)  
+Кратное описание данного файла:
+1. Создается сеть *develop*;
+2. Создается 3 подсети:
+   - *develop_a* в зоне `ru-central1-a` CIDR `10.0.1.0/24` выход в интернет через `NAT-шлюз` *gateway-1*  
+     К данной подсети подключены ВМ: *bastion, web-a, logstash, elastic*. Данные машины (кроме *bastion*) не имеют внешнего IP-адреса. Входящие подключения к ним 
+     осуществляются через *bastion* или *ALB*. Исходящий трафик в интернет - через `NAT-шлюз`.
+   - *develop_b* в зоне `ru-central1-b` CIDR `10.0.2.0/24` выход в интернет через `NAT-шлюз` *gateway-1*
+     К данной подсети подключена 1 ВМ - *web-b* без внешнего IP-адреса, аналогично серверу *web-a*.
+   - *develop_a_pub* в зоне `ru-central1-a` CIDR `192.168.0.0/24`
+     К данной подсети подлючены ВМ, имеющие внешний IP-адрес и доступ к общению через интернет: *zabbix, kibana, ALB*.
+3. Создаются группы безопасности (настройки firewall'a):
+   - *<ins>LAN</ins>* - это группа безопасности, которая установлена на все ВМ в инфраструктуре, для разрешения взаимодействия внутри сети *develop* (например для разрешения подключения к порту :22 от *bastion*).  
+   `Входящий трафик`:
+      - `Протокол` - любой;
+      - `IPv4_CIDR` - 10.0.0.0/16;
+      - `Порт` - 0 - 65535
+    `Исходящий трафик`:
+      - без ограничений.
+**<ins>Данее группы безопасности подключаются только к одноименным серверам</ins>**
+   - *<ins>bastion</ins>* - разрешается входящий трафик только по ssh (порт :22).  
+   `Входящий трафик`:
+      - `Протокол` - TCP;
+      - `IPv4_CIDR` - 0.0.0.0/0;
+      - `Порт` - 22
+   - *<ins>webs</ins>* - разрешается входящий трафик от *ALB* по порту :80 и по порту :10050 для подключения к Zabbix-Server.  
+   `Входящий трафик`:
+      - `Протокол` - TCP;
+      - `IPv4_CIDR` - 0.0.0.0/0;
+      - `Порт` - 80
+      - `Протокол` - ANY;
+      - `IPv4_CIDR` - 192.168.0.0/24;
+      - `Порт` - 10050
+   - *<ins>elastic</ins>* - разрешается входящий трафик от *kibana* по порту :9200.  
+   `Входящий трафик`:
+      - `Протокол` - TCP;
+      - `IPv4_CIDR` - 192.168.0.0/24;
+      - `Порт` - 9200
+     
+
+
+
+
+
+
+
+
+
+
 ---
 ### Мониторинг(Zabbix)
 ---
