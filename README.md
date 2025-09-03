@@ -130,7 +130,14 @@ resource "local_file" "inventory" {
   filename = "./ansible/inventory.yml"
 }
 ```
-В данном файле вместо IP-адресов ВМ используются их доменные имена в зоне `ru-central1.internal` вида: *<hostname>.ru-central1.internal*, которые без проблем "резолвятся" DNS-сервером внутри VPC Yandex Cloud.
+В данном файле вместо IP-адресов ВМ используются их доменные имена в зоне `ru-central1.internal` вида: *\<hostname>.ru-central1.internal*, которые без проблем "резолвятся" DNS-сервером внутри VPC Yandex Cloud.
+
+Было принято решение - использовать в данной работе отдельные ansible-playbooks для каждого сервера, что позволяет облегчить процесс тестирования при создании или изменении конфигурации отдельного сервиса.
+1. [Ansible-playbook для серверов *web-a и web-b*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/webs.yml)  
+С помощью него выполняется процесс:
+- Установки сервера Nginx;
+- Добавление репозиториев Zabbix, установка и настройка Zabbix Agent2;
+- Добавление репозиториев Elasticsearch, установка и настройка Filebeat с помощью конфигурационных файлов расположенных в данной [директории](https://github.com/DoctorZub/sys-diplom/tree/main/main/ansible/configs).
 
 ---
 ### Сеть
