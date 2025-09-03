@@ -88,6 +88,50 @@ Terraform код по созданию ВМ описан в файле [vms.tf](
 3. Следующим шагом идет создание `Virtual Host` *vh1* и  `HTTP-router` *http-router1*. К *vh1* подключается *http-router1*, и настраивается маршрут по перенаправлению трафика на ранее созданную `backend-group` *backend1*.
 4. На заключительном этапе создается сам `ALB` *alb1*, в нем настраивается `listener` *my-listener* на прослушивание 80 порта и перенаправлении трафика на `HTTP-router` *http-router1*.
 
+
+## Конфигурирование инфраструктуры с помощью Ansible
+Повторюсь, что настройка всех ВМ осуществляется удаленно с рабочей станции администратора через Ansible playbooks, а подключение ssh осуществляется через *bastion* host (или, другое название, Jump Host). Для реализации данной концепции на рабочей машине администатора необходимо внести изменения в файл `~/.ssh/config`:
+```
+Host <Внешний IP-адрес бастиона>
+   User user
+
+Host 10.0.*
+        ProxyJump <Внешний IP-адрес бастиона>
+        User user
+
+Host *.ru-central1.internal
+        ProxyJump <Внешний IP-адрес бастиона>
+        User user
+```
+
+Файл `inventory.yml` для Ansible формируется автоматически в файле [vms.tf](https://github.com/DoctorZub/sys-diplom/blob/main/main/vms.tf) в блоке:
+```terraform
+resource "local_file" "inventory" {
+  content  = <<-XYZ
+  [bastion]
+  ${yandex_compute_instance.bastion.hostname}.ru-central1.internal
+
+  [webservers]
+  ${yandex_compute_instance.web_a.hostname}.ru-central1.internal
+  ${yandex_compute_instance.web_b.hostname}.ru-central1.internal
+  
+  [zabbix]
+  ${yandex_compute_instance.zabbix.hostname}.ru-central1.internal
+
+  [elasticsearch]
+  ${yandex_compute_instance.elastic.hostname}.ru-central1.internal
+
+  [logstash]
+  ${yandex_compute_instance.logstash.hostname}.ru-central1.internal
+
+  [kibana]
+  ${yandex_compute_instance.kibana.hostname}.ru-central1.internal
+  XYZ
+  filename = "./ansible/inventory.yml"
+}
+```
+В данном файле вместо IP-адресов ВМ используются их доменные имена в зоне `ru-central1.internal` вида: *<hostname>.ru-central1.internal*, которые без проблем "резолвятся" DNS-сервером внутри VPC Yandex Cloud.
+
 ---
 ### Сеть
 ---
