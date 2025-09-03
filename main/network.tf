@@ -93,13 +93,6 @@ resource "yandex_vpc_security_group" "webs" {
   name       = "webs"
   network_id = yandex_vpc_network.develop.id
 
-
-  ingress {
-    description    = "Allow HTTPS"
-    protocol       = "TCP"
-    port           = 443
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
   ingress {
     description    = "Allow HTTP"
     protocol       = "TCP"
