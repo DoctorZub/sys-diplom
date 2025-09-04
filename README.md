@@ -88,7 +88,10 @@ Terraform код по созданию ВМ описан в файле [vms.tf](
 3. Следующим шагом идет создание `Virtual Host` *vh1* и  `HTTP-router` *http-router1*. К *vh1* подключается *http-router1*, и настраивается маршрут по перенаправлению трафика на ранее созданную `backend-group` *backend1*.
 4. На заключительном этапе создается сам `ALB` *alb1*, в нем настраивается `listener` *my-listener* на прослушивание 80 порта и перенаправлении трафика на `HTTP-router` *http-router1*.
 
+Проверка создания инфраструктуры в облачной консоли Yandex Cloud:
 
+![VMS](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/vms.png)
+![ALB](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/alb.png)
 #### Конфигурирование инфраструктуры с помощью Ansible
 Повторюсь, что настройка всех ВМ осуществляется удаленно с рабочей станции администратора через Ansible playbooks, а подключение ssh осуществляется через *bastion* host (или, другое название, Jump Host). Для реализации данной концепции на рабочей машине администатора необходимо внести изменения в файл `~/.ssh/config`:
 ```
