@@ -238,13 +238,58 @@ Terraform код, описывающий создание сети и прави
 ### Мониторинг(Zabbix)
 В качестве системы мониторинга используется `Zabbix-Server версии 7.0` с базой данных `PostgreSQL`. В качестве веб-сервера - `Nginx`, настроенный на порт 8080.  
 При настройке сервера в [ansible-playbook](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/zabbix_server.yml) необходимо указать пароль, который используется при создании пользователя *zabbix* в базе данных и указывается в файле `/etc/zabbix/zabbix_server.conf`. Данный пароль потребуется при первичном подключении к Zabbix-Server.  
-![Скриншот подключения к Zabbix-Server]  
+
+![Подключение к Zabbix](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/zabbix_1.png)  
+
 После успешного подключения к серверу необходимо войти под учетной записью администратора (стандартный логин *Admin*, пароль *zabbix*). После авторизации пароль можно поменять в веб-интерфейсе сервера.  
-Процесс добавления хостов для мониторинга организован через импорт заранее подготовленного [файла](https://github.com/DoctorZub/sys-diplom/blob/main/main/zabbix/zbx_export_hosts.yaml). Данный файл должен находится на рабочей станции администатора, и для добавления хостов необходимо импортировать файл в разделе ???  
-![Скринщоты добавления хостов]  
+
+![Подключение к Zabbix](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/zabbix_2.png) 
+![Password change](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/zabbix_3.png)  
+
+Процесс добавления хостов для мониторинга организован через импорт заранее подготовленного [файла](https://github.com/DoctorZub/sys-diplom/blob/main/main/zabbix/zbx_export_hosts.yaml). Данный файл должен находится на рабочей станции администатора, и для добавления хостов необходимо импортировать файл в разделе *Data collection > Hosts > Import*   
+
+![Import hosts](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/zabbix_4.png)    
+![Import hosts](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/zabbix_5.png)
 
 К хостам подключен шаблон `Linux by Zabbix agent`, который содержит достаточное кол-во метрик для мониторинга хоста. Как следует из названия шаблона, метрики собираются с помощью *Zabbix Agent2*, установленного на серверах *web-a и web-b*. Было принято решения использовать именно *Zabbix Agent2*, т.к. он является более новой версией Zabbix агента и, при необходимости, может обеспечить более полный и обширный сбор метрик, а также выполнение множества полезных функций (например: использование плагинов, использование последних версий крипто библиотек(OpenSSL) и т.д.).
 
+На сервере создан Dashboard *Netology_ZubkovDA*, содержащий 4 страницы с графиками `CPU`, `RAM`, `Disk`, `Network`.
+1. `CPU`
+
+![CPU-1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/cpu_1.png)    
+![CPU-2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/cpu_2.png)   
+
+На графиках отображена информация по:
+- Загрузке процессора в % - *CPU utilization*;
+- Нагрузке на процессор - *CPU Load* - это показатель, который отражает общий спрос на ресурсы процессора со стороны активных процессов и процессов, ожидающих выполнения. Он показывает, сколько задач ждёт в очереди компьютера для обработки процессором;
+- Информация о том, сколько времени процессор тратить на выполнение различных процедур - ожидание ввода/вывода, системные прерывания, время бездействия и т.д.
+
+2. `RAM`
+
+![RAM](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/ram.png)
+
+На графиках отображена информация о доступной и использованной оперативной памяти.
+
+3. `Disk`
+
+![Disk-1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/disk_1.png)    
+![Disk-2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/disk_2.png) 
+
+На графиках отображена информация по:
+- Свободному и использованному месту в корневом каталоге файловой системы - *Space utilization chart*;
+- Процент времени, в течение которого выбранный диск был занят операциями чтения или записи - *Disk utilization*  и  количество запросов на чтение или запись, ожидающих своей очереди на выполнение диском - *Disk queue size*;
+- Среднее время ожидания запросов на чтение и запись - *Disk average waiting time*;
+- Скорость чтения и записи - *Disk read/write rates*.
+
+4. `Network`
+
+![Network](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/network.png)
+
+На графике представлены следующие метрики:
+- Скорость загрузки и выгрузки - *Bits received* *Bits sent*;
+- Пакеты с ошибками - *Inbound/outbound packages with errors*
+- Отброшенные пакеты - *Inbound/outbound packages discarded*;
+- Статус интерфейса - *Operational status* - где 6 - это "интерфейс поднят и готов к использованию"
 
 ---
 ### Сбор логов(ELK)
