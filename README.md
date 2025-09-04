@@ -236,7 +236,7 @@ Terraform код, описывающий создание сети и прави
 В качестве системы мониторинга используется `Zabbix-Server версии 7.0` с базой данных `PostgreSQL`. В качестве веб-сервера - `Nginx`, настроенный на порт 8080.  
 При настройке сервера в [ansible-playbook](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/zabbix_server.yml) необходимо указать пароль, который используется при создании пользователя *zabbix* в базе данных и указывается в файле `/etc/zabbix/zabbix_server.conf`. Данный пароль потребуется при первичном подключении к Zabbix-Server.  
 ![Скриншот подключения к Zabbix-Server]  
-После успешного подключения к серверу необходимо войти под учетной записью администратора (стандатный логин *Admin*, пароль *zabbix*). После авторизации пароль можно поменять в веб-интерфейсе сервера.  
+После успешного подключения к серверу необходимо войти под учетной записью администратора (стандартный логин *Admin*, пароль *zabbix*). После авторизации пароль можно поменять в веб-интерфейсе сервера.  
 Процесс добавления хостов для мониторинга организован через импорт заранее подготовленного [файла](https://github.com/DoctorZub/sys-diplom/blob/main/main/zabbix/zbx_export_hosts.yaml). Данный файл должен находится на рабочей станции администатора, и для добавления хостов необходимо импортировать файл в разделе ???  
 ![Скринщоты добавления хостов]  
 
@@ -245,6 +245,32 @@ Terraform код, описывающий создание сети и прави
 
 ---
 ### Сбор логов(ELK)
+Процесс сбора и настройки логов огранизован через ELK-стек (Elasticsearch, Logstash, Kibana), по 1-й ВМ на каждый сервис. Сбор логов с веб-серверов *web-a и web-b* осуществляется с помощью `Filebeat`, установленного на серверах.  
+
+Конфигурация *filebeat* представлена в [файле](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/filebeat/filebeat.yml):
+- Логи собираются с двух файлов сервера Nginx - `/var/log/nginx/access.log` и `/var/log/nginx/error.log`;
+- Для того, чтобы отличать, из какого файла пришло сообщение, используются теги (tags);
+- Собранные логи отправляются на сервер с Logstash по адресу `logstash.ru-central1.internal:5044`.
+
+Конфигурация [*logstash*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/logstash/pipelines.yml):
+- Указывается, что будет выполняться один единственный pipeline - [beat_nginx.conf](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/logstash/beat_nginx.conf);
+- В pipeline прописано, что прием сообщений осуществляется с `beats` на порт :5044;
+- Поступившие сообщения фильтруются в соответсвии с *tags* с помощью `grok`. Для логов с `/var/log/nginx/access.log` и `/var/log/nginx/error.log` прописаны разные выражения фильтрации.
+- Обработанные, отфильтрованные сообщения отправляются на сервер с Elasticsearch по адресу `elastic.ru-central1.internal:9200`
+
+Конфигурация [*elasticsearch*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/logstash/pipelines.yml):
+- Указывается имя кластера - *Zubkov*;
+- Заполняется поле `network.host: elastic.ru-central1.internal`, определяющее адрес, по которому можно обратиться к Elasticsearch из вне;
+- Отключаются функции безопасности `xpack.security.enabled: false`, т.к. в данной работе они не настраиваются.
+
+Конфигурация [*kibana*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/logstash/pipelines.yml):
+- Разрешаются внешние подключения с любых хостов на порт :5601 - `server.port: 5601` `server.host: "0.0.0.0"`;
+- Указывается URL адрес хоста с Elasticsearch - `elasticsearch.hosts: ["http://elastic.ru-central1.internal:9200"]`.
+
+
+
+
+
 ---
 ### Резервное копирование
 ---
