@@ -289,7 +289,7 @@ Terraform код, описывающий создание сети и прави
 - Скорость загрузки и выгрузки - *Bits received* *Bits sent*;
 - Пакеты с ошибками - *Inbound/outbound packages with errors*
 - Отброшенные пакеты - *Inbound/outbound packages discarded*;
-- Статус интерфейса - *Operational status* - где 6 - это "интерфейс поднят и готов к использованию"
+- Статус интерфейса - *Operational status* - где 6 - это **"интерфейс поднят и готов к использованию"**.
 
 ---
 ### Сбор логов(ELK)
@@ -314,6 +314,26 @@ Terraform код, описывающий создание сети и прави
 Конфигурация [*kibana*](https://github.com/DoctorZub/sys-diplom/blob/main/main/ansible/configs/logstash/pipelines.yml):
 - Разрешаются внешние подключения с любых хостов на порт :5601 - `server.port: 5601` `server.host: "0.0.0.0"`;
 - Указывается URL адрес хоста с Elasticsearch - `elasticsearch.hosts: ["http://elastic.ru-central1.internal:9200"]`.
+
+Для отображения данных с Elasticsearch в Kibana было совершено несколько подключений к серверам *web-a и web-b* через публичный адрекс ALB.  
+После этого в веб-интерфейсе Kibana в разделе *Management > Stack Management > Kibana > Data Views* необходимо создать *Data View* из данных Elasticsearch.
+
+![Kibana-1](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/kibana_1.png)    
+![Kibana-2](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/kibana_2.png)
+
+После создания приходящие в Elasticsearch логи можно посмотреть в разделе *Analytics > Discover*.
+
+![Kibana-3](https://github.com/DoctorZub/sys-diplom/blob/main/main/img/kibana_3.png) 
+
+Был создан *Data View* под названием *nginx*, и настроено удобное представление отдельных полей логов:
+- `@timestamp` - время создания и считывания лога;
+- `ip` - IP-адрес, откуда происходило подключение к серверу *Nginx*, в данной работе - это IP-адреса балансировщика нагрузки;
+- `agent.name` `agent.type` - имя и тип агента, можно отследить с какого именно сервера получены логи от filebeat;
+- `http.method` - метод HTTP;
+- `log.file.path` - лог-файл, с которого считан лог;
+- `referrer` - HTTP-Referrer;
+- `url` - на какой путь выполнялось подключение к серверу;
+- `remote_agent` - с какого агента/приложения выполнялось подключение.
 
 
 
